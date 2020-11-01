@@ -1,0 +1,12 @@
+RConnecting to database: jdbc:mysql://localhost:3306/payroll_service?useSSL=false
+BConnection Successful: com.mysql.cj.jdbc.ConnectionImpl@17920c0f
+RConnecting to database: jdbc:mysql://localhost:3306/payroll_service?useSSL=false
+BConnection Successful: com.mysql.cj.jdbc.ConnectionImpl@7975e7c6
+RConnecting to database: jdbc:mysql://localhost:3306/payroll_service?useSSL=false
+BConnection Successful: com.mysql.cj.jdbc.ConnectionImpl@674bceba
+[id=1, name='Jeff Bezos', salary=1.0E7, id=2, name='Bill Gates', salary=200000.0, id=2, name='Satya Nadela', salary=300000.0]
+'id=1, name='Jeff Bezos', salary=1.0E7
+*id=2, name='Bill Gates', salary=200000.0
+,id=2, name='Satya Nadela', salary=300000.0
+RConnecting to database: jdbc:mysql://localhost:3306/payroll_service?useSSL=false
+BConnection Successful: com.mysql.cj.jdbc.ConnectionImpl@65839f23

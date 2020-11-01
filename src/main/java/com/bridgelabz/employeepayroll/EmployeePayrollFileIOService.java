@@ -12,7 +12,7 @@ public class EmployeePayrollFileIOService {
 
     Path filepath = Paths.get(PAYROLL_FILE_NAME);
 
-    public void writeData(List<EmployeePayroll> employeePayrollList) {
+    public void writeData(List<EmployeePayroll> employeePayrollList) throws EmployeePayrollException {
         System.out.println(employeePayrollList);
         StringBuffer stringBuffer = new StringBuffer();
         employeePayrollList.forEach(employee -> {
@@ -22,11 +22,11 @@ public class EmployeePayrollFileIOService {
         try {
             Files.write(filepath,stringBuffer.toString().getBytes());
         }catch (IOException e){
-            e.printStackTrace();
+          throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.UNABLE_TO_WRITE);
         }
     }
 
-    public List<EmployeePayroll> readData() {
+    public List<EmployeePayroll> readData() throws EmployeePayrollException {
         List<EmployeePayroll> employeePayrollList = new ArrayList<>();
         try{
             List<String> contents = Files.readAllLines(filepath);
@@ -44,7 +44,7 @@ public class EmployeePayrollFileIOService {
                 }
             }
         }catch (IOException e){
-            e.printStackTrace();
+            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.UNABLE_TO_READ);
         }
         return employeePayrollList;
     }

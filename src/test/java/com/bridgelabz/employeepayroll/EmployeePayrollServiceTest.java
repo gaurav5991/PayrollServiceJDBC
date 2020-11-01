@@ -16,7 +16,7 @@ public class EmployeePayrollServiceTest {
      * TestCase to check the number of entries write using writeEmployeeData
      */
     @Test
-    public void givenThreeEmployeeWhenWrittenToFileShouldMatchEmployeeEntries() {
+    public void givenThreeEmployeeWhenWrittenToFileShouldMatchEmployeeEntries() throws EmployeePayrollException {
         EmployeePayroll[] arrayOfEmps = {
                 new EmployeePayroll(1, "Jeff Bezos", 10000000.0),
                 new EmployeePayroll(2, "Bill Gates", 200000.00),
@@ -34,7 +34,7 @@ public class EmployeePayrollServiceTest {
      * TestCase to check the count of data read from file
      */
     @Test
-    public void givenFileOnReadingFromFileShouldMatchEmployeeCount() {
+    public void givenFileOnReadingFromFileShouldMatchEmployeeCount() throws EmployeePayrollException {
         employeePayrollService = new EmployeePayrollService();
         List<EmployeePayroll> employeePayrollData = employeePayrollService.readEmployeePayrollData(FILE_IO);
         Assert.assertEquals(3, employeePayrollData.size());
@@ -44,9 +44,21 @@ public class EmployeePayrollServiceTest {
      * TestCase to check the number of entries read from database using JDBC
      */
     @Test
-    public void givenEmployeePayrollInDBWhenRetrievedShouldMatchEmployeeCount() {
+    public void givenEmployeePayrollInDBWhenRetrievedShouldMatchEmployeeCount() throws EmployeePayrollException {
         employeePayrollService = new EmployeePayrollService();
         List<EmployeePayroll> employeePayrollData = employeePayrollService.readEmployeePayrollData(DB_IO);
         Assert.assertEquals(3, employeePayrollData.size());
+    }
+
+    /**
+     * TestCase to check Salary of Employee is Updated or not Using UpdateEmployeeSalary Method
+     */
+    @Test
+    public void givenNewSalaryOfEmployeeWhenUpdatedShouldMatch() throws EmployeePayrollException {
+        employeePayrollService = new EmployeePayrollService();
+        List<EmployeePayroll> employeePayrollData = employeePayrollService.readEmployeePayrollData(DB_IO);
+        employeePayrollService.updateEmployeeSalary("Terisa", 3000000.00);
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Terisa");
+        Assert.assertTrue(result);
     }
 }

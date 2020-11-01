@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bridgelabz.employeepayroll.EmployeePayrollServiceTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2020-11-01T07:12:50" hostname="DESKTOP-5KJH2JU" time="0.288">
+  <properties/>
+  <testcase name="givenNewSalaryOfEmployeeWhenUpdatedShouldMatch" classname="com.bridgelabz.employeepayroll.EmployeePayrollServiceTest" time="0.263"/>
+  <testcase name="givenThreeEmployeeWhenWrittenToFileShouldMatchEmployeeEntries" classname="com.bridgelabz.employeepayroll.EmployeePayrollServiceTest" time="0.018"/>
+  <testcase name="givenEmployeePayrollInDBWhenRetrievedShouldMatchEmployeeCount" classname="com.bridgelabz.employeepayroll.EmployeePayrollServiceTest" time="0.006"/>
+  <testcase name="givenFileOnReadingFromFileShouldMatchEmployeeCount" classname="com.bridgelabz.employeepayroll.EmployeePayrollServiceTest" time="0.001"/>
+  <system-out><![CDATA[Connecting to database: jdbc:mysql://localhost:3306/payroll_service?useSSL=false
+Connection Successful: com.mysql.cj.jdbc.ConnectionImpl@17920c0f
+Connecting to database: jdbc:mysql://localhost:3306/payroll_service?useSSL=false
+Connection Successful: com.mysql.cj.jdbc.ConnectionImpl@7975e7c6
+Connecting to database: jdbc:mysql://localhost:3306/payroll_service?useSSL=false
+Connection Successful: com.mysql.cj.jdbc.ConnectionImpl@674bceba
+[id=1, name='Jeff Bezos', salary=1.0E7, id=2, name='Bill Gates', salary=200000.0, id=2, name='Satya Nadela', salary=300000.0]
+id=1, name='Jeff Bezos', salary=1.0E7
+id=2, name='Bill Gates', salary=200000.0
+id=2, name='Satya Nadela', salary=300000.0
+Connecting to database: jdbc:mysql://localhost:3306/payroll_service?useSSL=false
+Connection Successful: com.mysql.cj.jdbc.ConnectionImpl@65839f23
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
