@@ -21,6 +21,7 @@ public class EmployeePayrollFileDBService {
 
     /**
      * To get Instance of singleton Objects
+     *
      * @return
      */
     public static EmployeePayrollFileDBService getInstance() {
@@ -57,6 +58,7 @@ public class EmployeePayrollFileDBService {
 
     /**
      * Overloaded getEmployeePayrollData Method
+     *
      * @param name
      * @return List
      */
@@ -74,8 +76,10 @@ public class EmployeePayrollFileDBService {
         return employeePayrollList;
     }
 
-    /**'
+    /**
+     * '
      * Overloaded getEmployeePayrollData Method
+     *
      * @param resultSet
      * @return
      */
@@ -110,25 +114,22 @@ public class EmployeePayrollFileDBService {
 
     /**
      * Method to Update employee data
+     *
      * @param name
      * @param salary
      * @return
      */
     public int updateEmployeeData(String name, double salary) throws EmployeePayrollException {
-        return this.updateEmployeeDataUsingStatement(name, salary);
+        return this.updateEmployeeDataUsingPreparedStatement(name, salary);
     }
 
-    /**
-     * Method to update Employee Data Using simple statement
-     * @param name
-     * @param salary
-     * @return
-     */
-    private int updateEmployeeDataUsingStatement(String name, double salary) throws EmployeePayrollException {
-        String sql = String.format("Update employee_payroll set salary = %.2f where name = '%s';", salary, name);
+    private int updateEmployeeDataUsingPreparedStatement(String name, double salary) throws EmployeePayrollException {
         try (Connection connection = this.getConnection()) {
-            Statement statement = connection.createStatement();
-            return statement.executeUpdate(sql);
+            String sql = "update employee_payroll set salary = ? where name  = ? ";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setDouble(1, salary);
+            preparedStatement.setString(2, name);
+            return preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.UNABLE_TO_CONNECT);
         }
