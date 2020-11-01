@@ -2,6 +2,7 @@ package com.bridgelabz.employeepayroll;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class EmployeePayrollService {
@@ -116,12 +117,66 @@ public class EmployeePayrollService {
      * @return
      */
     public List<EmployeePayroll> readEmployeePayrollForDateRange(IOService ioService, LocalDate startDate, LocalDate endDate) throws EmployeePayrollException {
-        if(ioService.equals(IOService.DB_IO))
-            return employeePayrollFileDBService.getEmployeepayrollForDateRange(startDate,endDate);
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollFileDBService.getEmployeepayrollForDateRange(startDate, endDate);
         return null;
     }
 
+    /**
+     * Method to get Average salary by Gender
+     *
+     * @param ioService
+     * @return
+     */
+    public Map<String, Double> readAverageSalaryByGender(IOService ioService) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollFileDBService.getAverageSalaryByGender();
+        return null;
+    }
 
+    /**
+     * Method to get Count by Gender
+     * @param ioService
+     * @return
+     */
+    public Map<String, Double> readCountByGender(IOService ioService) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollFileDBService.getCountByGender();
+        return null;
+    }
+
+    /**
+     * Method to get minimum salary by Gender
+     * @param ioService
+     * @return
+     */
+    public Map<String, Double> readMinumumSalaryByGender(IOService ioService) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollFileDBService.getMinimumByGender();
+        return null;
+    }
+
+    /**
+     * Method to get Maximum salary by Gender
+     * @param ioService
+     * @return
+     */
+    public Map<String, Double> readMaximumSalaryByGender(IOService ioService) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollFileDBService.getMaximumByGender();
+        return null;
+    }
+
+    /**
+     * Method to get Sum of salary by Gender
+     * @param ioService
+     * @return
+     */
+    public Map<String, Double> readSumSalaryByGender(IOService ioService) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollFileDBService.getSalarySumByGender();
+        return null;
+    }
     /**
      * Method to print Employee data  from file or console
      *

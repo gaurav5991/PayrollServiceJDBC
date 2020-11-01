@@ -3,7 +3,9 @@ package com.bridgelabz.employeepayroll;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollFileDBService {
 
@@ -93,6 +95,7 @@ public class EmployeePayrollFileDBService {
 
     /**
      * Method to get Employee data within given Date Range
+     *
      * @param startDate
      * @param endDate
      * @return
@@ -159,5 +162,51 @@ public class EmployeePayrollFileDBService {
         } catch (SQLException e) {
             throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.UNABLE_TO_CONNECT);
         }
+    }
+
+    /**
+     * Method to calculate average salary of employee and adding it to Map
+     *
+     * @return
+     * @throws EmployeePayrollException
+     */
+    public Map<String, Double> getAverageSalaryByGender() {
+        String sql = "select gender,avg(salary) as avg_salary from employee_payroll group by gender";
+        return getAggregateByGender("gender","avg_salary",sql);
+    }
+
+    public Map<String, Double> getAggregateByGender(String gender, String aggregate, String sql){
+        Map<String, Double> genderCountMap = new HashMap<>();
+        try(Connection connection = this.getConnection();){
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery(sql);
+            while(result.next()) {
+                String getgender = result.getString(gender);
+                Double count = result.getDouble(aggregate);
+                genderCountMap.put(getgender, count);
+            }
+        }catch (SQLException e) {
+            e.getMessage();
+        }
+        return genderCountMap;
+    }
+    public Map<String, Double> getCountByGender() {
+        String sql = "select gender,count(salary) as count_gender from employee_payroll group by gender";
+        return getAggregateByGender("gender","count_gender",sql);
+    }
+
+    public Map<String, Double> getMinimumByGender() {
+        String sql = "select gender,min(salary) as minSalary_gender from employee_payroll group by gender";
+        return getAggregateByGender("gender","minSalary_gender",sql);
+    }
+
+    public Map<String, Double> getMaximumByGender() {
+        String sql = "select gender,max(salary) as maxSalary_gender from employee_payroll group by gender";
+        return getAggregateByGender("gender","maxSalary_gender",sql);
+    }
+
+    public Map<String, Double> getSalarySumByGender() {
+        String sql = "select gender,sum(salary) as sumSalary_gender from employee_payroll group by gender";
+        return getAggregateByGender("gender","sumSalary_gender",sql);
     }
 }
