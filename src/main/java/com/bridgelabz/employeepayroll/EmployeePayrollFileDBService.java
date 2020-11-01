@@ -33,15 +33,7 @@ public class EmployeePayrollFileDBService {
     /*Method to read data from  database using JDBC*/
     public List<EmployeePayroll> readData() throws EmployeePayrollException {
         String sql = "Select * from employee_payroll; ";
-        List<EmployeePayroll> employeePayrollList = new ArrayList<>();
-        try (Connection connection = this.getConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
-            employeePayrollList = this.getEmployeepayrollData(resultSet);
-        } catch (SQLException e) {
-            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.UNABLE_TO_CONNECT);
-        }
-        return employeePayrollList;
+        return this.getEmployeepayrollUsingDB(sql);
     }
 
     /*Method to setup connection using getConnection method*/
@@ -100,6 +92,34 @@ public class EmployeePayrollFileDBService {
     }
 
     /**
+     * Method to get Employee data within given Date Range
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public List<EmployeePayroll> getEmployeepayrollForDateRange(LocalDate startDate, LocalDate endDate) throws EmployeePayrollException {
+        String sql = String.format("Select * from employee_payroll where start between '%s' and '%s';", Date.valueOf(startDate), Date.valueOf(endDate));
+        return this.getEmployeepayrollUsingDB(sql);
+    }
+
+    /**
+     * @param sql
+     * @return
+     * @throws EmployeePayrollException
+     */
+    private List<EmployeePayroll> getEmployeepayrollUsingDB(String sql) throws EmployeePayrollException {
+        List<EmployeePayroll> employeePayrollList = new ArrayList<>();
+        try (Connection connection = this.getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            employeePayrollList = this.getEmployeepayrollData(resultSet);
+        } catch (SQLException e) {
+            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.UNABLE_TO_CONNECT);
+        }
+        return employeePayrollList;
+    }
+
+    /**
      * Method to create prepared statement
      */
     private void prepareStatementForEmployeeData() throws EmployeePayrollException {
@@ -123,6 +143,12 @@ public class EmployeePayrollFileDBService {
         return this.updateEmployeeDataUsingPreparedStatement(name, salary);
     }
 
+    /**
+     * @param name
+     * @param salary
+     * @return
+     * @throws EmployeePayrollException
+     */
     private int updateEmployeeDataUsingPreparedStatement(String name, double salary) throws EmployeePayrollException {
         try (Connection connection = this.getConnection()) {
             String sql = "update employee_payroll set salary = ? where name  = ? ";

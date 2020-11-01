@@ -1,5 +1,6 @@
 package com.bridgelabz.employeepayroll;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
@@ -69,6 +70,7 @@ public class EmployeePayrollService {
 
     /**
      * Method to get Employeepayrol data
+     *
      * @param name
      * @return
      */
@@ -81,6 +83,7 @@ public class EmployeePayrollService {
 
     /**
      * Method to check id DB in sync with EmployeePayroll
+     *
      * @param name
      * @return
      */
@@ -103,6 +106,21 @@ public class EmployeePayrollService {
         }
         return employeePayrollList;
     }
+
+    /**
+     * Method to read employee data in given date range
+     *
+     * @param ioService
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public List<EmployeePayroll> readEmployeePayrollForDateRange(IOService ioService, LocalDate startDate, LocalDate endDate) throws EmployeePayrollException {
+        if(ioService.equals(IOService.DB_IO))
+            return employeePayrollFileDBService.getEmployeepayrollForDateRange(startDate,endDate);
+        return null;
+    }
+
 
     /**
      * Method to print Employee data  from file or console
