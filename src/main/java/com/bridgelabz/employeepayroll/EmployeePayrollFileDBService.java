@@ -211,17 +211,10 @@ public class EmployeePayrollFileDBService {
         return getAggregateByGender("gender", "sumSalary_gender", sql);
     }
 
-    public EmployeePayroll addEmployeePayroll(String name, double salary, LocalDate startDate, String gender, int companyID, String[] department, String companyName) throws EmployeePayrollException {
+    public EmployeePayroll addEmployeePayrollData(String name, double salary, LocalDate startDate, String gender, int companyID, String[] department, String companyName) throws EmployeePayrollException {
         int employeeId = -1;
-        Connection connection;
         EmployeePayroll employeePayroll = null;
-        try {
-            connection = this.getConnection();
-            connection.setAutoCommit(false);
-        } catch (SQLException e) {
-            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.PROBLEM_IN_RESULTSET);
-        }
-        try {
+        try (Connection connection = this.getConnection()) {
             String sql = "INSERT INTO employee_payroll (name,salary,start,gender,companyID,department) " + "VALUES (?,?, ?,?,?,?);";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, name);
@@ -231,21 +224,29 @@ public class EmployeePayrollFileDBService {
             statement.setInt(5, companyID);
             Array array = connection.createArrayOf("VARCHAR", department);
             statement.setArray(6, array);
-            int rows = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
-            if (rows == 1) {
+            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+            if (rowAffected == 1) {
                 ResultSet result = statement.getGeneratedKeys();
                 if (result.next())
                     employeeId = result.getInt(1);
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                connection.rollback();
-                return employeePayroll;
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
+            employeePayroll = this.addEmployeePayroll(employeeId, name, salary, startDate, gender, companyID, department, companyName);
+        } catch(SQLException e) {
+        throw new EmployeePayrollException(e.getMessage(),
+                EmployeePayrollException.ExceptionType.PROBLEM_IN_RESULTSET);
+    }
+        return employeePayroll;
+}
+
+    public EmployeePayroll addEmployeePayroll(int employeeId, String name, double salary, LocalDate startDate, String gender, int companyID, String[] department, String companyName) throws EmployeePayrollException {
+        Connection connection;
+        EmployeePayroll employeePayroll = null;
+        try {
+            connection = this.getConnection();
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.PROBLEM_IN_RESULTSET);
         }
 
         try (Statement statement = connection.createStatement()) {
@@ -313,8 +314,6 @@ public class EmployeePayrollFileDBService {
                 e1.printStackTrace();
             }
         }
-
-
         try {
             connection.commit();
         } catch (SQLException e) {

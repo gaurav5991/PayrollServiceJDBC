@@ -71,7 +71,7 @@ public class EmployeePayrollService {
 
     
     public void addEmployeePayrollData(String name, double salary, LocalDate startDate, String gender, int companyId, String[] department, String companyName) throws EmployeePayrollException {
-        employeePayrollList.add(employeePayrollFileDBService.addEmployeePayroll(name,salary,startDate,gender,companyId,department,companyName));
+        employeePayrollList.add(employeePayrollFileDBService.addEmployeePayrollData(name,salary,startDate,gender,companyId,department,companyName));
 
     }
 
