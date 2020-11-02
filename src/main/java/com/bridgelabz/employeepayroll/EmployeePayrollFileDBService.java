@@ -209,4 +209,23 @@ public class EmployeePayrollFileDBService {
         String sql = "select gender,sum(salary) as sumSalary_gender from employee_payroll group by gender";
         return getAggregateByGender("gender","sumSalary_gender",sql);
     }
+
+    public EmployeePayroll addEmployeePayroll(String name, double salary, LocalDate startDate, String gender) throws EmployeePayrollException {
+        int employeeId=-1;
+        EmployeePayroll employeePayroll;
+        String sql=String.format("INSERT INTO employee_payroll (name,salary,start,gender) "+"VALUES ('%s', %s, '%s','%s')", name, salary, Date.valueOf(startDate), gender);
+        try(Connection connection=this.getConnection()) {
+            Statement statement = connection.createStatement();
+            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+            if(rowAffected==1) {
+                ResultSet result=statement.getGeneratedKeys();
+                if(result.next())
+                    employeeId=result.getInt(1);
+            }
+            employeePayroll=new EmployeePayroll(employeeId,name,salary,startDate);
+        } catch (SQLException e) {
+            throw new EmployeePayrollException(e.getMessage(),EmployeePayrollException.ExceptionType.PROBLEM_IN_RESULTSET);
+        }
+        return employeePayroll;
+    }
 }

@@ -70,6 +70,19 @@ public class EmployeePayrollService {
     }
 
     /**
+     * Method to add new Employee to database
+     * @param name
+     * @param salary
+     * @param startDate
+     * @param gender
+     * @throws EmployeePayrollException
+     */
+    public void addEmployeePayrollData(String name, double salary, LocalDate startDate, String gender) throws EmployeePayrollException {
+        employeePayrollList.add(employeePayrollFileDBService.addEmployeePayroll(name,salary,startDate,gender));
+
+    }
+
+    /**
      * Method to get Employeepayrol data
      *
      * @param name
