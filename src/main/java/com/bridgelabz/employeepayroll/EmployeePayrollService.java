@@ -69,21 +69,9 @@ public class EmployeePayrollService {
             employeePayroll.setEmployeeSalary(salary);
     }
 
-    /**
-     * Method to add new Employee to database
-     * @param name
-     * @param salary
-     * @param startDate
-     * @param gender
-     * @throws EmployeePayrollException
-     */
-    public void addEmployeePayrollData(String name, double salary, LocalDate startDate, String gender) throws EmployeePayrollException {
-        employeePayrollList.add(employeePayrollFileDBService.addEmployeePayroll(name,salary,startDate,gender));
-
-    }
-
-    public void addEmployeePayrollForUC8(String name, double salary, LocalDate startDate, String gender) throws EmployeePayrollException {
-        employeePayrollList.add(employeePayrollFileDBService.addEmployeePayroll(name,salary,startDate,gender));
+    
+    public void addEmployeePayrollData(String name, double salary, LocalDate startDate, String gender, int companyId, String[] department, String companyName) throws EmployeePayrollException {
+        employeePayrollList.add(employeePayrollFileDBService.addEmployeePayroll(name,salary,startDate,gender,companyId,department,companyName));
 
     }
 
