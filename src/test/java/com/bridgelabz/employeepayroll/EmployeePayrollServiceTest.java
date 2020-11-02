@@ -131,8 +131,18 @@ public class EmployeePayrollServiceTest {
     @Test
     public void givenEmployeeDBWhenAddedShouldSyncWithDB() throws EmployeePayrollException {
         employeePayrollService=new EmployeePayrollService();
-        employeePayrollService.readEmployeePayrollData(IOService.DB_IO);
+        employeePayrollService.readEmployeePayrollData(DB_IO);
         employeePayrollService.addEmployeePayrollData("Mark",5000000.00,LocalDate.now(),"M");
+        boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark");
+        Assert.assertTrue(result);
+
+    }
+
+    @Test
+    public void givenEmployeeDBWhenAddedShouldSyncWithDB() throws EmployeePayrollException {
+        EmployeePayrollService employeePayrollService=new EmployeePayrollService();
+        employeePayrollService.readEmployeePayrollData(DB_IO);
+        employeePayrollService.addEmployeePayrollForUC8("Mark",5000000.00,LocalDate.now(),"M");
         boolean result=employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark");
         Assert.assertTrue(result);
 
