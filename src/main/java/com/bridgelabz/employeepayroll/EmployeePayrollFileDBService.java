@@ -172,60 +172,99 @@ public class EmployeePayrollFileDBService {
      */
     public Map<String, Double> getAverageSalaryByGender() {
         String sql = "select gender,avg(salary) as avg_salary from employee_payroll group by gender";
-        return getAggregateByGender("gender","avg_salary",sql);
+        return getAggregateByGender("gender", "avg_salary", sql);
     }
 
-    public Map<String, Double> getAggregateByGender(String gender, String aggregate, String sql){
+    public Map<String, Double> getAggregateByGender(String gender, String aggregate, String sql) {
         Map<String, Double> genderCountMap = new HashMap<>();
-        try(Connection connection = this.getConnection();){
+        try (Connection connection = this.getConnection();) {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(sql);
-            while(result.next()) {
+            while (result.next()) {
                 String getgender = result.getString(gender);
                 Double count = result.getDouble(aggregate);
                 genderCountMap.put(getgender, count);
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.getMessage();
         }
         return genderCountMap;
     }
+
     public Map<String, Double> getCountByGender() {
         String sql = "select gender,count(salary) as count_gender from employee_payroll group by gender";
-        return getAggregateByGender("gender","count_gender",sql);
+        return getAggregateByGender("gender", "count_gender", sql);
     }
 
     public Map<String, Double> getMinimumByGender() {
         String sql = "select gender,min(salary) as minSalary_gender from employee_payroll group by gender";
-        return getAggregateByGender("gender","minSalary_gender",sql);
+        return getAggregateByGender("gender", "minSalary_gender", sql);
     }
 
     public Map<String, Double> getMaximumByGender() {
         String sql = "select gender,max(salary) as maxSalary_gender from employee_payroll group by gender";
-        return getAggregateByGender("gender","maxSalary_gender",sql);
+        return getAggregateByGender("gender", "maxSalary_gender", sql);
     }
 
     public Map<String, Double> getSalarySumByGender() {
         String sql = "select gender,sum(salary) as sumSalary_gender from employee_payroll group by gender";
-        return getAggregateByGender("gender","sumSalary_gender",sql);
+        return getAggregateByGender("gender", "sumSalary_gender", sql);
     }
 
     public EmployeePayroll addEmployeePayroll(String name, double salary, LocalDate startDate, String gender) throws EmployeePayrollException {
-        int employeeId=-1;
+        int employeeId = -1;
         EmployeePayroll employeePayroll;
-        String sql=String.format("INSERT INTO employee_payroll (name,salary,start,gender) "+"VALUES ('%s', %s, '%s','%s')", name, salary, Date.valueOf(startDate), gender);
-        try(Connection connection=this.getConnection()) {
+        String sql = String.format("INSERT INTO employee_payroll (name,salary,start,gender) " + "VALUES ('%s', %s, '%s','%s')", name, salary, Date.valueOf(startDate), gender);
+        try (Connection connection = this.getConnection()) {
             Statement statement = connection.createStatement();
             int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
-            if(rowAffected==1) {
-                ResultSet result=statement.getGeneratedKeys();
-                if(result.next())
-                    employeeId=result.getInt(1);
+            if (rowAffected == 1) {
+                ResultSet result = statement.getGeneratedKeys();
+                if (result.next())
+                    employeeId = result.getInt(1);
             }
-            employeePayroll=new EmployeePayroll(employeeId,name,salary,startDate);
+            employeePayroll = new EmployeePayroll(employeeId, name, salary, startDate);
         } catch (SQLException e) {
-            throw new EmployeePayrollException(e.getMessage(),EmployeePayrollException.ExceptionType.PROBLEM_IN_RESULTSET);
+            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.PROBLEM_IN_RESULTSET);
         }
+        return employeePayroll;
+    }
+
+    public EmployeePayroll addEmployeePayrollForUC8(String name, double salary, LocalDate startDate, String gender) throws EmployeePayrollException {
+        int employeeId = -1;
+        Connection connection = null;
+        EmployeePayroll employeePayroll = null;
+        try {
+            connection = this.getConnection();
+        } catch (SQLException e) {
+            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.);
+        }
+        try (Statement statement = connection.createStatement()) {
+            String sql = String.format("INSERT INTO employee_payroll (name,salary,start,gender) " + "VALUES ('%s', %s, '%s','%s')", name, salary, Date.valueOf(startDate), gender);
+            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+            if (rowAffected == 1) {
+                ResultSet result = statement.getGeneratedKeys();
+                if (result.next())
+                    employeeId = result.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.PROBLEM_IN_RESULTSET);
+        }
+        try (Statement statement = connection.createStatement()) {
+            double deductions = salary * 0.2;
+            double taxablePay = salary - deductions;
+            double tax = taxablePay * 0.1;
+            double netPay = salary - tax;
+            String sql = String.format("INSERT INTO payroll_details " + "(employee_id,basic_pay,deductions,taxable_pay,tax,net_pay) VALUES " + "(%s,%s,%s,%s,%s,%s)", employeeId, salary, deductions, taxablePay, tax, netPay);
+            int rowAffected = statement.executeUpdate(sql);
+            if (rowAffected == 1)
+                employeePayroll = new EmployeePayroll(employeeId, name, salary, startDate);
+
+        } catch (SQLException e) {
+            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.PROBLEM_IN_RESULTSET);
+        }
+
         return employeePayroll;
     }
 }

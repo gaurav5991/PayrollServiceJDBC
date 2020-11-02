@@ -82,6 +82,11 @@ public class EmployeePayrollService {
 
     }
 
+    public void addEmployeePayrollForUC8(String name, double salary, LocalDate startDate, String gender) throws EmployeePayrollException {
+        employeePayrollList.add(employeePayrollFileDBService.addEmployeePayroll(name,salary,startDate,gender));
+
+    }
+
     /**
      * Method to get Employeepayrol data
      *
