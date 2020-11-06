@@ -130,10 +130,20 @@ public class EmployeePayrollServiceTest {
      * Test Case to check new Employee Added Successfully to Database and in sync
      */
     @Test
-    public void givenEmployeeDBWhenAddedShouldSyncWithDB() throws EmployeePayrollException {
+    public void givenEmployee_DBWhenAdded_ShouldSyncWithDB() throws EmployeePayrollException {
         employeePayrollService.readEmployeePayrollData(DB_IO);
         employeePayrollService.addEmployeePayrollData(108,"Adam","7894568901","xyz street","M",LocalDate.now(),50000.00,125,"Marketing");
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Adam");
         Assert.assertTrue(result);
+    }
+
+    /**
+     * Test Case to check employee deleted or not
+     */
+    @Test
+    public void givenEmployee_whenDeleted_shouldBeInSyncWithDB() throws EmployeePayrollException {
+        employeePayrollService.readEmployeePayrollData(DB_IO);
+        int result = employeePayrollService.deleteEmployeeFromPayroll("Adam");
+        Assert.assertEquals(3,result);
     }
 }
