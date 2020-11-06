@@ -6,6 +6,9 @@ import java.util.Objects;
 public class EmployeePayroll {
     private int employeeId;
     private String employeeName;
+    private String employeePhone;
+    private String employeeAddress;
+    private String employeeGender;
     private double employeeSalary;
     private LocalDate startDate;
 
@@ -19,6 +22,25 @@ public class EmployeePayroll {
 
     public EmployeePayroll(int employeeId, String employeeName, double employeeSalary, LocalDate startDate) {
         this(employeeId,employeeName,employeeSalary);
+        this.startDate = startDate;
+    }
+
+    public EmployeePayroll(int employeeId, String employeeName, String employeePhone, String employeeAddress, String employeeGender, double employeeSalary, LocalDate startDate) {
+        this.employeeId = employeeId;
+        this.employeeName = employeeName;
+        this.employeePhone = employeePhone;
+        this.employeeAddress = employeeAddress;
+        this.employeeGender = employeeGender;
+        this.employeeSalary = employeeSalary;
+        this.startDate = startDate;
+    }
+
+    public EmployeePayroll(String employeeName, String employeePhone, String employeeAddress, String employeeGender, double employeeSalary, LocalDate startDate) {
+        this.employeeName = employeeName;
+        this.employeePhone = employeePhone;
+        this.employeeAddress = employeeAddress;
+        this.employeeGender = employeeGender;
+        this.employeeSalary = employeeSalary;
         this.startDate = startDate;
     }
 

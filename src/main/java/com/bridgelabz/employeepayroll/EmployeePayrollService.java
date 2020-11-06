@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class EmployeePayrollService {
+
     public enum IOService {
         CONSOLE_IO, FILE_IO, DB_IO
     }
@@ -52,6 +53,8 @@ public class EmployeePayrollService {
     }
 
     /**
+     * Method to update Employee Salary  by name
+     *
      * @param name
      * @param salary
      */
@@ -69,14 +72,22 @@ public class EmployeePayrollService {
             employeePayroll.setEmployeeSalary(salary);
     }
 
-    
-    public void addEmployeePayrollData(String name, double salary, LocalDate startDate, String gender, int companyId, String[] department, String companyName) throws EmployeePayrollException {
-        employeePayrollList.add(employeePayrollFileDBService.addEmployeePayrollData(name,salary,startDate,gender,companyId,department,companyName));
-
+    /**
+     * @param name
+     * @param salary
+     * @param startDate
+     * @param gender
+     * @throws EmployeePayrollException
+     */
+    public void addEmployeePayrollData(int id, String name, String phone, String address, String gender, LocalDate startDate,
+                                       double salary, int departmentId, String departmentName)
+            throws EmployeePayrollException {
+        employeePayrollList.add(employeePayrollFileDBService.
+                addEmployeeToPayroll(id,name,phone,address,gender,startDate,salary,departmentId,departmentName));
     }
 
     /**
-     * Method to get Employeepayrol data
+     * Method to get Employee payroll data
      *
      * @param name
      * @return
@@ -89,7 +100,7 @@ public class EmployeePayrollService {
     }
 
     /**
-     * Method to check id DB in sync with EmployeePayroll
+     * Method to check if DB in sync with EmployeePayroll
      *
      * @param name
      * @return
@@ -122,7 +133,8 @@ public class EmployeePayrollService {
      * @param endDate
      * @return
      */
-    public List<EmployeePayroll> readEmployeePayrollForDateRange(IOService ioService, LocalDate startDate, LocalDate endDate) throws EmployeePayrollException {
+    public List<EmployeePayroll> readEmployeePayrollForDateRange(IOService ioService, LocalDate startDate, LocalDate endDate)
+            throws EmployeePayrollException {
         if (ioService.equals(IOService.DB_IO))
             return employeePayrollFileDBService.getEmployeepayrollForDateRange(startDate, endDate);
         return null;
@@ -142,6 +154,7 @@ public class EmployeePayrollService {
 
     /**
      * Method to get Count by Gender
+     *
      * @param ioService
      * @return
      */
@@ -153,6 +166,7 @@ public class EmployeePayrollService {
 
     /**
      * Method to get minimum salary by Gender
+     *
      * @param ioService
      * @return
      */
@@ -164,6 +178,7 @@ public class EmployeePayrollService {
 
     /**
      * Method to get Maximum salary by Gender
+     *
      * @param ioService
      * @return
      */
@@ -175,6 +190,7 @@ public class EmployeePayrollService {
 
     /**
      * Method to get Sum of salary by Gender
+     *
      * @param ioService
      * @return
      */
@@ -183,12 +199,13 @@ public class EmployeePayrollService {
             return employeePayrollFileDBService.getSalarySumByGender();
         return null;
     }
+
     /**
      * Method to print Employee data  from file or console
      *
      * @param ioService
      */
-    public void printEmployeeData(IOService ioService) {
+    public void printEmployeeData(IOService ioService) throws EmployeePayrollException {
         if (ioService.equals(IOService.FILE_IO)) {
             new EmployeePayrollFileIOService().printData();
         } else if (ioService.equals(IOService.CONSOLE_IO))
@@ -196,6 +213,8 @@ public class EmployeePayrollService {
     }
 
     /**
+     * Method to count Number of Entry for FILE_IO and CONSOLE_IO
+     *
      * @param ioService
      * @return Entry Count
      */

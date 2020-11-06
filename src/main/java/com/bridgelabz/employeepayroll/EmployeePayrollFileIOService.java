@@ -13,7 +13,6 @@ public class EmployeePayrollFileIOService {
     Path filepath = Paths.get(PAYROLL_FILE_NAME);
 
     public void writeData(List<EmployeePayroll> employeePayrollList) throws EmployeePayrollException {
-        System.out.println(employeePayrollList);
         StringBuffer stringBuffer = new StringBuffer();
         employeePayrollList.forEach(employee -> {
             String employeeDataString = employee.toString().concat("\n");
@@ -49,15 +48,14 @@ public class EmployeePayrollFileIOService {
         return employeePayrollList;
     }
 
-    public void printData() {
+    public void printData() throws EmployeePayrollException {
         try {
-
             List<String> strings = Files.readAllLines(filepath);
             for (String string: strings){
                 System.out.println(string);
             }
         }catch (IOException e){
-            e.printStackTrace();
+            throw new EmployeePayrollException(e.getMessage(),EmployeePayrollException.ExceptionType.UNABLE_TO_PRINT);
         }
     }
 
