@@ -340,4 +340,14 @@ public class EmployeePayrollFileDBService {
         }
         return employeePayroll;
     }
+
+    public void deleteEmployee(String name) throws EmployeePayrollException {
+        String sql = String.format("update employee set is_active = 'false' where name = '%s';", name);
+        try (Connection connection = this.getConnection()){
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.SQLEXCEPTION);
+        }
+    }
 }

@@ -1,9 +1,11 @@
 package com.bridgelabz.employeepayroll;
 
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class EmployeePayrollService {
 
@@ -83,8 +85,21 @@ public class EmployeePayrollService {
                                        double salary, int departmentId, String departmentName)
             throws EmployeePayrollException {
         employeePayrollList.add(employeePayrollFileDBService.
-                addEmployeeToPayroll(id,name,phone,address,gender,startDate,salary,departmentId,departmentName));
+                addEmployeeToPayroll(id, name, phone, address, gender, startDate, salary, departmentId, departmentName));
     }
+
+    /**
+     * Metho to delete Employee From Payroll
+     *
+     * @param name
+     * @return
+     */
+    public int deleteEmployeeFromPayroll(String name) throws EmployeePayrollException {
+        employeePayrollFileDBService.deleteEmployee(name);
+        employeePayrollList = this.employeePayrollList.stream().filter(employee -> !employee.getEmployeeName().equals(name)).collect(Collectors.toList());
+        return employeePayrollList.size();
+    }
+
 
     /**
      * Method to get Employee payroll data
