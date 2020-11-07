@@ -1,10 +1,7 @@
 package com.bridgelabz.employeepayroll;
 
 import java.time.LocalDate;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EmployeePayrollService {
@@ -76,21 +73,21 @@ public class EmployeePayrollService {
 
     public void addEmployeeToPayroll(List<EmployeePayroll> employeePayrollDataList) {
         employeePayrollDataList.forEach(employeePayroll -> {
-            System.out.println("Employee being Added: "+employeePayroll.getEmployeeName());
+            System.out.println("Employee being Added: " + employeePayroll.getEmployeeName());
             try {
-                this.addEmployeePayrollData(employeePayroll.getEmployeeName(),employeePayroll.getEmployeeSalary(),employeePayroll.getEmployeeGender(),employeePayroll.getStartDate());
+                this.addEmployeePayrollData(employeePayroll.getEmployeeName(), employeePayroll.getEmployeeSalary(), employeePayroll.getEmployeeGender(), employeePayroll.getStartDate());
             } catch (EmployeePayrollException e) {
                 e.printStackTrace();
             }
-            System.out.println("Employee Added: "+employeePayroll.getEmployeeName());
+            System.out.println("Employee Added: " + employeePayroll.getEmployeeName());
         });
         System.out.println(this.employeePayrollList);
     }
 
-    public void addEmployeePayrollData(String name,double salary,String gender, LocalDate startDate)
+    public void addEmployeePayrollData(String name, double salary, String gender, LocalDate startDate)
             throws EmployeePayrollException {
         employeePayrollList.add(employeePayrollFileDBService.
-                addEmployeeToPayroll(name,gender, startDate, salary));
+                addEmployeeToPayroll(name, gender, startDate, salary));
     }
 
     /**
@@ -264,9 +261,45 @@ public class EmployeePayrollService {
 
     /*Return Count Entries Added*/
     public int countEntries(IOService ioService) {
-        if(ioService.equals(IOService.DB_IO)){
+        if (ioService.equals(IOService.DB_IO)) {
             return employeePayrollList.size();
         }
         return 0;
+    }
+
+    /* Adding Employee Payroll using multithreads */
+    public void addEmployeesToPayrollWithThreads(List<EmployeePayroll> employeePayrollDataList) {
+        Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+        employeePayrollDataList.forEach(employeePayrollData -> {
+            Runnable task = () -> {
+                employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+                System.out.println("Employee Being Added: " + Thread.currentThread().getName());
+                this.addEmployeeToPayroll(employeePayrollData.getEmployeeName(), employeePayrollData.getEmployeeSalary(),
+                        employeePayrollData.getStartDate(), employeePayrollData.getEmployeeGender());
+                employeeAdditionStatus.put(employeePayrollData.hashCode(), true);
+                System.out.println("Employee Added " + Thread.currentThread().getName());
+            };
+            Thread thread = new Thread(task, employeePayrollData.getEmployeeName());
+            thread.start();
+        });
+        while (employeeAdditionStatus.containsValue(false)) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(employeePayrollDataList);
+
+    }
+
+    private void addEmployeeToPayroll(String employeeName, double employeeSalary, LocalDate startDate, String employeeGender) {
+        employeePayrollList.forEach(employeePayrollData -> {
+            System.out.println("Employee Being Added: " + employeePayrollData.getEmployeeName());
+            this.addEmployeeToPayroll(employeePayrollData.getEmployeeName(), employeePayrollData.getEmployeeSalary(),
+                    employeePayrollData.getStartDate(), employeePayrollData.getEmployeeGender());
+            System.out.println("Employee Added:" + employeePayrollData.getEmployeeName());
+            System.out.println(this.employeePayrollList);
+        });
     }
 }
