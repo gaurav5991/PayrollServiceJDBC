@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -169,6 +170,21 @@ public class EmployeePayrollServiceTest {
         Instant threadEnd = Instant.now();
         System.out.println("Duration with Thread; " + Duration.between(threadStart, threadEnd));
         Assert.assertEquals(7,employeePayrollService.countEntries(DB_IO));
+    }
+
+    @Test
+    public void given2Employees_whenAddedToDB_shouldMatchEmployeeEntries() throws InterruptedException, EmployeePayrollException {
+        EmployeePayroll[] arrayOfEmployees = {
+                new EmployeePayroll(0,"sharad",LocalDate.now(),"2345678901","F","Jaipur",50000.00, new int[]{102}, new String[]{"Dept2"}),
+                new EmployeePayroll(0, "shukla", LocalDate.now(),"34343434", "F","Bhopal", 3000000.0 , new int[]{101}, new String[]{"Dept1"}),
+        };
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Instant threadStart = Instant.now();
+        employeePayrollService.addEmployeesToPayrollWithThreads(Arrays.asList(arrayOfEmployees));
+        Thread.sleep(6000);
+        Instant threadEnd = Instant.now();
+        System.out.println("Duration for complete execution with Threads: " + Duration.between(threadStart, threadEnd));
+        Assert.assertEquals(11, employeePayrollService.countEntries(EmployeePayrollService.IOService.DB_IO));
     }
 
 }
