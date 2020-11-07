@@ -282,13 +282,13 @@ public class EmployeePayrollService {
             Thread thread = new Thread(task, employeePayrollData.getEmployeeName());
             thread.start();
         });
-        while (employeeAdditionStatus.containsValue(false)) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        while (employeeAdditionStatus.containsValue(false)) {
+//            try {
+//                Thread.sleep(10);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
         System.out.println(employeePayrollDataList);
 
     }
