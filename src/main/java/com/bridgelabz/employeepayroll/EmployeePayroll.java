@@ -21,24 +21,24 @@ public class EmployeePayroll {
     }
 
     public EmployeePayroll(int employeeId, String employeeName, double employeeSalary, LocalDate startDate) {
-        this(employeeId,employeeName,employeeSalary);
+        this(employeeId, employeeName, employeeSalary);
         this.startDate = startDate;
+    }
+
+    public EmployeePayroll(int employeeId, String employeeName, String employeeGender, double employeeSalary, LocalDate startDate) {
+        this(employeeId, employeeName, employeeSalary, startDate);
+        this.employeeGender = employeeGender;
     }
 
     public EmployeePayroll(int employeeId, String employeeName, String employeePhone, String employeeAddress, String employeeGender, double employeeSalary, LocalDate startDate) {
-        this.employeeId = employeeId;
-        this.employeeName = employeeName;
+        this(employeeId, employeeName, employeeSalary, startDate);
         this.employeePhone = employeePhone;
         this.employeeAddress = employeeAddress;
         this.employeeGender = employeeGender;
-        this.employeeSalary = employeeSalary;
-        this.startDate = startDate;
     }
 
-    public EmployeePayroll(String employeeName, String employeePhone, String employeeAddress, String employeeGender, double employeeSalary, LocalDate startDate) {
+    public EmployeePayroll(String employeeName, String employeeGender, double employeeSalary, LocalDate startDate) {
         this.employeeName = employeeName;
-        this.employeePhone = employeePhone;
-        this.employeeAddress = employeeAddress;
         this.employeeGender = employeeGender;
         this.employeeSalary = employeeSalary;
         this.startDate = startDate;
@@ -74,6 +74,30 @@ public class EmployeePayroll {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public String getEmployeePhone() {
+        return employeePhone;
+    }
+
+    public void setEmployeePhone(String employeePhone) {
+        this.employeePhone = employeePhone;
+    }
+
+    public String getEmployeeAddress() {
+        return employeeAddress;
+    }
+
+    public void setEmployeeAddress(String employeeAddress) {
+        this.employeeAddress = employeeAddress;
+    }
+
+    public String getEmployeeGender() {
+        return employeeGender;
+    }
+
+    public void setEmployeeGender(String employeeGender) {
+        this.employeeGender = employeeGender;
     }
 
     @Override

@@ -242,13 +242,19 @@ public class EmployeePayrollFileDBService {
      * @return
      * @throws EmployeePayrollException
      */
-    public EmployeePayroll addEmployeeToPayrollUC7(int id,String name,String phone,String address, String gender, double salary, LocalDate startDate) throws EmployeePayrollException {
+    public EmployeePayroll addEmployeeToPayroll(String name, String gender, LocalDate startDate, double salary) throws EmployeePayrollException {
         int employeeId = -1;
+        Connection connection = null;
         EmployeePayroll employeePayroll;
-        String sql = String.format("insert into employee(id, name,phone,address, gender,salary,start)" +
-                "values(%d,'%s','%s','%s','%s',%.2f,'%s'); ", id,name, phone, address, gender, salary, Date.valueOf(startDate));
-        try (Connection connection = this.getConnection()) {
-            Statement statement = connection.createStatement();
+        try {
+            connection = this.getConnection();
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.SQLEXCEPTION);
+        }
+        try (Statement statement = connection.createStatement()) {
+            String sql = String.format("insert into employee(id, name, gender,salary,start)" +
+                    "values(%d,'%s','%s',%.2f,'%s'); ", name, gender, salary, Date.valueOf(startDate));
             int rowAffected = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
             if (rowAffected == 1) {
                 ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -256,9 +262,36 @@ public class EmployeePayrollFileDBService {
                     employeeId = generatedKeys.getInt("emp_id");
                 }
             }
-            employeePayroll = new EmployeePayroll(employeeId, name, salary, startDate);
+            employeePayroll = new EmployeePayroll(name, gender,salary, startDate);
         } catch (SQLException e) {
-            throw new EmployeePayrollException(EmployeePayrollException.ExceptionType.SQLEXCEPTION);
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                throw new EmployeePayrollException(e1.getMessage(), EmployeePayrollException.ExceptionType.SQLEXCEPTION);
+            }
+            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.SQLEXCEPTION);
+        }
+        try (Statement statement = connection.createStatement()) {
+            double deductions = salary * 0.2;
+            double taxablePay = salary - deductions;
+            double tax = taxablePay * 0.1;
+            double netPay = salary - tax;
+            String sql = String.format("INSERT INTO payroll(basic_pay,deductions,taxable_pay,tax,net_pay) VALUES "
+                    + "(%.2f,%.2f,%.2f,%.2f,%.2f);",  salary, deductions, taxablePay, tax, netPay);
+            int rowAffected = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+            if (rowAffected == 1) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    employeeId = resultSet.getInt("emp_id");
+                }
+            }
+        } catch (SQLException e) {
+            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.SQLEXCEPTION);
+        }
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            throw new EmployeePayrollException(e.getMessage(), EmployeePayrollException.ExceptionType.SQLEXCEPTION);
         }
         return employeePayroll;
     }
@@ -343,7 +376,7 @@ public class EmployeePayrollFileDBService {
 
     public void deleteEmployee(String name) throws EmployeePayrollException {
         String sql = String.format("update employee set is_active = 'false' where name = '%s';", name);
-        try (Connection connection = this.getConnection()){
+        try (Connection connection = this.getConnection()) {
             Statement statement = connection.createStatement();
             statement.executeUpdate(sql);
         } catch (SQLException e) {

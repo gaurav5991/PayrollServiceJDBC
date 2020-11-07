@@ -74,6 +74,25 @@ public class EmployeePayrollService {
             employeePayroll.setEmployeeSalary(salary);
     }
 
+    public void addEmployeeToPayroll(List<EmployeePayroll> employeePayrollDataList) {
+        employeePayrollDataList.forEach(employeePayroll -> {
+            System.out.println("Employee being Added: "+employeePayroll.getEmployeeName());
+            try {
+                this.addEmployeePayrollData(employeePayroll.getEmployeeName(),employeePayroll.getEmployeeSalary(),employeePayroll.getEmployeeGender(),employeePayroll.getStartDate());
+            } catch (EmployeePayrollException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Employee Added: "+employeePayroll.getEmployeeName());
+        });
+        System.out.println(this.employeePayrollList);
+    }
+
+    public void addEmployeePayrollData(String name,double salary,String gender, LocalDate startDate)
+            throws EmployeePayrollException {
+        employeePayrollList.add(employeePayrollFileDBService.
+                addEmployeeToPayroll(name,gender, startDate, salary));
+    }
+
     /**
      * @param name
      * @param salary
@@ -241,5 +260,13 @@ public class EmployeePayrollService {
             count = employeePayrollList.size();
         }
         return count;
+    }
+
+    /*Return Count Entries Added*/
+    public int countEntries(IOService ioService) {
+        if(ioService.equals(IOService.DB_IO)){
+            return employeePayrollList.size();
+        }
+        return 0;
     }
 }

@@ -4,6 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -146,4 +148,23 @@ public class EmployeePayrollServiceTest {
         int result = employeePayrollService.deleteEmployeeFromPayroll("Adam");
         Assert.assertEquals(3,result);
     }
+    
+    @Test
+    public void givenSixEmployeeWhenWrittenToFileShouldMatchEmployeeEntries() throws EmployeePayrollException {
+        EmployeePayroll[] arrayOfEmps = {
+                new EmployeePayroll(0, "Jeff Bezos", "M",10000000.0,LocalDate.now()),
+                new EmployeePayroll(0, "Bill Gates", "M",200000.00,LocalDate.now()),
+                new EmployeePayroll(0, "Satya Nadela","M", 300000.00,LocalDate.now()),
+                new EmployeePayroll(0, "Sunder", "M",600000.00,LocalDate.now()),
+                new EmployeePayroll(0, "Mukesh", "M",1000000.00,LocalDate.now()),
+                new EmployeePayroll(0, "Anil", "M",200000.00,LocalDate.now())
+        };
+        employeePayrollService.readEmployeePayrollData(DB_IO);
+        Instant start = Instant.now();
+        employeePayrollService.addEmployeeToPayroll(Arrays.asList(arrayOfEmps));
+        Instant end = Instant.now();
+        System.out.println("Duration without Thread: "+ Duration.between(start,end));
+        Assert.assertEquals(7,employeePayrollService.countEntries(DB_IO));
+    }
+
 }

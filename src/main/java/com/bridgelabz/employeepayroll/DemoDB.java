@@ -8,9 +8,9 @@ import java.util.Enumeration;
 
 public class DemoDB {
     public static void main(String[] args) {
-        String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
+        String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service";
         String userName = "root";
-        String password = "Gaurav@123";
+        String password = "G@ur@v@123";
         Connection connection;
         System.out.println("Welcome to Employee Payroll Database System");
         try {
